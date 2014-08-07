@@ -9,6 +9,7 @@ import (
 	"time"
         "strconv"
         "github.com/gin-gonic/gin"
+        "fmt"
 )
 
 type logstashEvent struct {
@@ -56,6 +57,7 @@ func Logger(writer io.Writer) gin.HandlerFunc {
 			log.Printf("Unable to JSON-ify our event (%#v): %v", event, err)
 			return
 		}
+                fmt.Println("OUTPUT", string(output))
 		out.Println(string(output))
 	}
 }
