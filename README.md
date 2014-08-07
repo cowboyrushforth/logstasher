@@ -1,8 +1,6 @@
-# logstasher [![wercker status](https://app.wercker.com/status/750f4584767e9b0cb38448ec2fc1e2ae/s/ "wercker status")](https://app.wercker.com/project/bykey/750f4584767e9b0cb38448ec2fc1e2ae)
+# logstasher 
 
-[![GoDoc](https://godoc.org/github.com/martini-contrib/logstasher?status.png)](https://godoc.org/github.com/martini-contrib/logstasher)
-
-logstasher is a Martini middleware that prints logstash-compatible JSON to an `io.Writer` for each HTTP request.
+logstasher is a gin middleware that prints logstash-compatible JSON to an `io.Writer` for each HTTP request.
 
 Here's an example from one of the Go microservices we have at @bikeexchange :
 
@@ -24,25 +22,25 @@ package main
 import (
   "log"
 
-  "github.com/codegangsta/martini"
+  "github.com/gin-gonic/gin"
   "github.com/mipearson/logstasher"
   "github.com/mipearson/rfw"
 )
 
 func main() {
-  m := martini.Classic()
+  r := gin.Default()
 
   logstashLogFile, err := rfw.Open("hello.log", 0644)
   if err != nil {
     log.Fatalln(err)
   }
   defer logstashLogFile.Close()
-  m.Use(logstasher.Logger(logstashLogFile))
+  r.Use(logstasher.Logger(logstashLogFile))
 
-  m.Get("/", func() string {
-    return "Hello world!"
+  r.Get("/", func(c *gin.Context) string {
+    c.String(200, "hello world")
   })
-  m.Run()
+  r.Run()
 }
 ```
 

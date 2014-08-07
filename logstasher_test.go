@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
-
-	"github.com/go-martini/martini"
+        "github.com/gin-gonic/gin"
+        "fmt"
 )
 
 // Copied and adapted from martini's logger_test.go
@@ -17,20 +17,23 @@ func Test_Logger(t *testing.T) {
 	buff := bytes.NewBufferString("")
 	recorder := httptest.NewRecorder()
 
-	m := martini.New()
-	m.Use(Logger(buff))
-	m.Use(func(res http.ResponseWriter) {
-		res.WriteHeader(http.StatusNotFound)
+        r := gin.Default()
+        r.Use(Logger(buff))
+	r.Use(func(c *gin.Context) {
+             c.String(404, "not found")
+             c.Next()
 	})
 
 	req, err := http.NewRequest("GET", "http://localhost:3000/foobar?baz=quux", nil)
-	req.ParseForm()
+	//req.ParseForm()
 	if err != nil {
 		t.Error(err)
 	}
 
-	m.ServeHTTP(recorder, req)
+        r.ServeHTTP(recorder, req)
 	expect(t, recorder.Code, http.StatusNotFound)
+
+        fmt.Println("BUFF", buff.String())
 	refute(t, len(buff.String()), 0)
 
 	var event logstashEvent
