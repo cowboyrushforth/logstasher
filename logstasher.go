@@ -9,7 +9,6 @@ import (
 	"time"
         "strconv"
         "github.com/gin-gonic/gin"
-        "fmt"
 )
 
 type logstashEvent struct {
@@ -25,7 +24,7 @@ type logstashEvent struct {
 
 // Logger returns a middleware handler prints the request in a Logstash-JSON compatiable format
 func Logger(writer io.Writer) gin.HandlerFunc {
-	out := log.New(writer, "", 0)
+	out := log.New(writer, "", log.LstdFlags)
         return func(c *gin.Context) {
 		start := time.Now()
 
@@ -57,7 +56,6 @@ func Logger(writer io.Writer) gin.HandlerFunc {
 			log.Printf("Unable to JSON-ify our event (%#v): %v", event, err)
 			return
 		}
-                fmt.Println("OUTPUT", string(output))
 		out.Println(string(output))
 	}
 }
