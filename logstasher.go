@@ -24,7 +24,7 @@ type logstashEvent struct {
 
 // Logger returns a middleware handler prints the request in a Logstash-JSON compatiable format
 func Logger(writer io.Writer) gin.HandlerFunc {
-	out := log.New(writer, "", log.LstdFlags)
+	out := log.New(writer, "", 0)
         return func(c *gin.Context) {
 		start := time.Now()
 
